@@ -9,8 +9,8 @@
 
 
 import argparse
-import os
 import codecs
+import os
 import sys
 from subprocess import check_call
 from tempfile import NamedTemporaryFile
@@ -42,7 +42,7 @@ def parse_args():
 
 def environment():
     env = DEFAULTS.copy()
-    env.update(os.environ.copy())
+    env.update(os.environ)
     return env
 
 def ensure_text(maybe_text):
