@@ -38,12 +38,38 @@ def parse_args():
         """)
     parser.add_argument('domains', metavar='DOMAIN', nargs='+',
         help='Domain names to request. First domain is the common name.')
+    parser.add_argument('--country', dest='REQ_COUNTRY', action='store',
+        default='', help='Two character country code, e.g. "DE".')
+    parser.add_argument('--province', dest='REQ_PROVINCE', action='store',
+        default='', help='Name of province, e.g. "Berlin" or "Texas".')
+    parser.add_argument('--city', dest='REQ_CITY', action='store',
+        default='', help='Name of city, e.g. "Stuttgart".')
+    parser.add_argument('--organisation', '--org', dest='REQ_ORG', action='store',
+        default='', help='Name of your organisation or company, e.g. "Microsoft".')
+    parser.add_argument('--organisational_unit', '--ou', dest='REQ_OU', action='store',
+        default='', help='Name of organisational unit or subdivision (usually left blank).')
+    parser.add_argument('--email', dest='REQ_EMAIL', action='store',
+        default='', help='Email address of contact person in your organisation.')
+    
     return parser.parse_args()
 
-def environment():
+def environment_updated_with_arguments(arguments):
     env = DEFAULTS.copy()
     env.update(os.environ)
+    
+    request_arguments = extract_request_arguments(arguments)
+    env.update(request_arguments)
+    
     return env
+
+def extract_request_arguments(arguments):
+    relevant_request_argument_names = [argument_name for argument_name in dir(arguments) if argument_name.startswith('REQ_')]
+    request_arguments = dict()
+    for argument_name in relevant_request_argument_names:
+        value = getattr(arguments, argument_name)
+        if value != '':
+            request_arguments[argument_name] = value
+    return request_arguments
 
 def ensure_text(maybe_text):
     text_type = str if PY3 else unicode
@@ -62,6 +88,8 @@ def write_openssl_config_to(fd, domains):
 
 def main():
     arguments = parse_args()
+    env = environment_updated_with_arguments(arguments)
+    print env
     with NamedTemporaryFile() as config_fd:
         config_fd = codecs.getwriter('utf-8')(config_fd)
         write_openssl_config_to(config_fd, arguments.domains)
@@ -75,7 +103,7 @@ def main():
                 '-reqexts', 'SAN',
                 '-config', config_fd.name,
             ] + batch_params,
-            env=environment(),
+            env=env,
         )
 
 OPEN_SSL_CONF = u"""
