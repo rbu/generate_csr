@@ -89,7 +89,6 @@ def write_openssl_config_to(fd, domains):
 def main():
     arguments = parse_args()
     env = environment_updated_with_arguments(arguments)
-    print env
     with NamedTemporaryFile() as config_fd:
         config_fd = codecs.getwriter('utf-8')(config_fd)
         write_openssl_config_to(config_fd, arguments.domains)
