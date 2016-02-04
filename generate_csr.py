@@ -39,17 +39,17 @@ def parse_args():
     parser.add_argument('domains', metavar='DOMAIN', nargs='+',
         help='Domain names to request. First domain is the common name.')
     parser.add_argument('--country', dest='REQ_COUNTRY', action='store',
-        default='', help='Two character country code, e.g. "DE".')
+        default=None, help='Two character country code, e.g. "DE".')
     parser.add_argument('--province', dest='REQ_PROVINCE', action='store',
-        default='', help='Name of province, e.g. "Berlin" or "Texas".')
+        default=None, help='Name of province, e.g. "Berlin" or "Texas".')
     parser.add_argument('--city', dest='REQ_CITY', action='store',
-        default='', help='Name of city, e.g. "Stuttgart".')
+        default=None, help='Name of city, e.g. "Stuttgart".')
     parser.add_argument('--organisation', '--org', dest='REQ_ORG', action='store',
-        default='', help='Name of your organisation or company, e.g. "Microsoft".')
+        default=None, help='Name of your organisation or company, e.g. "Microsoft".')
     parser.add_argument('--organisational_unit', '--ou', dest='REQ_OU', action='store',
-        default='', help='Name of organisational unit or subdivision (usually left blank).')
+        default=None, help='Name of organisational unit or subdivision (usually left blank).')
     parser.add_argument('--email', dest='REQ_EMAIL', action='store',
-        default='', help='Email address of contact person in your organisation.')
+        default=None, help='Email address of contact person in your organisation.')
     
     return parser.parse_args()
 
@@ -67,7 +67,7 @@ def extract_request_arguments(arguments):
     request_arguments = dict()
     for argument_name in relevant_request_argument_names:
         value = getattr(arguments, argument_name)
-        if value != '':
+        if value != None:
             request_arguments[argument_name] = value
     return request_arguments
 
